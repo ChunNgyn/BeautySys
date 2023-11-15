@@ -6,6 +6,7 @@ package com.beautysys.ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import javax.swing.JFrame;
 
 /**
  *
@@ -73,6 +74,9 @@ public class FormDangNhap extends javax.swing.JFrame {
         lblQuenMK.setFont(new java.awt.Font("Arial", 2, 14)); // NOI18N
         lblQuenMK.setText("Quên mật khẩu ?");
         lblQuenMK.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblQuenMKMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lblQuenMKMouseEntered(evt);
             }
@@ -168,6 +172,11 @@ public class FormDangNhap extends javax.swing.JFrame {
         lblQuenMK.setForeground(Color.blue);
         lblQuenMK.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }//GEN-LAST:event_lblQuenMKMouseEntered
+
+    private void lblQuenMKMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuenMKMouseClicked
+        // TODO add your handling code here:
+        new FormQuenMK().setVisible(true);
+    }//GEN-LAST:event_lblQuenMKMouseClicked
 
     /**
      * @param args the command line arguments
