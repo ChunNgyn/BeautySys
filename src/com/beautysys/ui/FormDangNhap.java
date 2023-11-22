@@ -4,6 +4,10 @@
  */
 package com.beautysys.ui;
 
+import com.beautysys.DAO.NhanVienDAO;
+import com.beautysys.Entity.NhanVien;
+import com.beautysys.helper.DialogHelper;
+import com.beautysys.helper.ShareHelper;
 import java.awt.Color;
 import java.awt.Cursor;
 import javax.swing.JFrame;
@@ -14,12 +18,57 @@ import javax.swing.JFrame;
  */
 public class FormDangNhap extends javax.swing.JFrame {
 
+    NhanVienDAO dao = new NhanVienDAO();
+
     /**
      * Creates new form LoginForm
      */
     public FormDangNhap() {
         initComponents();
         setLocationRelativeTo(null);
+    }
+
+    boolean ValidateTKMK() {
+        String tenTK = txtTK.getText().trim();
+        String matKhau = new String(txtMK.getPassword()).trim();
+
+        if (tenTK.isEmpty() || matKhau.isEmpty()) {
+            DialogHelper.alert(this, "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.");
+            return false;
+        }
+
+        return true;
+    }
+
+    void Login() {
+        if (!ValidateTKMK()) {
+            return;
+        }
+        String TenTK = txtTK.getText();
+        String MK = new String(txtMK.getPassword());
+        try {
+            NhanVien nhanVien = dao.findByTenTK(TenTK);
+            if (nhanVien != null) {
+                String MK2 = nhanVien.getMatKhau();
+                if (MK.equals(MK2)) {
+                    ShareHelper.USER = nhanVien;
+                    DialogHelper.alert(this, "Đăng nhập thành công!");
+                    this.dispose();
+                } else {
+                    DialogHelper.alert(this, "Sai mật khẩu!");
+                }
+            } else {
+                DialogHelper.alert(this, "Sai tên đăng nhập!");
+            }
+        } catch (Exception e) {
+            DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+        }
+    }
+
+    void Exit() {
+        if (DialogHelper.confirm(this, "Bạn có muốn thoát khỏi ứng dụng không?")) {
+            System.exit(0);
+        }
     }
 
     /**
@@ -33,15 +82,15 @@ public class FormDangNhap extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblDN = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtTK = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
+        btnDN = new javax.swing.JButton();
         btnThoat = new javax.swing.JButton();
         lblQuenMK = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
+        txtMK = new javax.swing.JPasswordField();
 
         jButton1.setText("jButton1");
 
@@ -50,9 +99,9 @@ public class FormDangNhap extends javax.swing.JFrame {
 
         jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
 
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 20)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("ĐĂNG NHẬP");
+        lblDN.setFont(new java.awt.Font("Arial", 1, 20)); // NOI18N
+        lblDN.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblDN.setText("ĐĂNG NHẬP");
 
         jLabel2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel2.setText("Tài khoản");
@@ -60,8 +109,13 @@ public class FormDangNhap extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel3.setText("Mật khẩu");
 
-        jButton3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jButton3.setText("Đăng nhập");
+        btnDN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        btnDN.setText("Đăng nhập");
+        btnDN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDNActionPerformed(evt);
+            }
+        });
 
         btnThoat.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         btnThoat.setText("Thoát");
@@ -96,46 +150,45 @@ public class FormDangNhap extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblDN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(84, 84, 84)
-                        .addComponent(jButton3)
+                        .addComponent(btnDN)
                         .addGap(18, 18, 18)
                         .addComponent(btnThoat)
-                        .addGap(94, 94, 94))
+                        .addGap(94, 100, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(38, 38, 38)
+                        .addComponent(txtTK))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(lblQuenMK)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(38, 38, 38)
-                        .addComponent(jTextField1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addGap(38, 38, 38)
-                        .addComponent(jTextField2)))
-                .addContainerGap())
+                        .addGap(43, 43, 43)
+                        .addComponent(txtMK))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(lblDN)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtMK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(lblQuenMK)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
+                    .addComponent(btnDN)
                     .addComponent(btnThoat))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -144,7 +197,7 @@ public class FormDangNhap extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -156,7 +209,7 @@ public class FormDangNhap extends javax.swing.JFrame {
 
     private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
         // TODO add your handling code here:
-        dispose();
+        Exit();
     }//GEN-LAST:event_btnThoatActionPerformed
 
     private void lblQuenMKMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuenMKMouseExited
@@ -177,6 +230,11 @@ public class FormDangNhap extends javax.swing.JFrame {
         // TODO add your handling code here:
         new FormQuenMK().setVisible(true);
     }//GEN-LAST:event_lblQuenMKMouseClicked
+
+    private void btnDNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDNActionPerformed
+        // TODO add your handling code here:
+        Login();
+    }//GEN-LAST:event_btnDNActionPerformed
 
     /**
      * @param args the command line arguments
@@ -215,16 +273,16 @@ public class FormDangNhap extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDN;
     private javax.swing.JButton btnThoat;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JLabel lblDN;
     private javax.swing.JLabel lblQuenMK;
+    private javax.swing.JPasswordField txtMK;
+    private javax.swing.JTextField txtTK;
     // End of variables declaration//GEN-END:variables
 }

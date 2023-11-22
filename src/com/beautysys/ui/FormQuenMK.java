@@ -159,14 +159,14 @@ public class FormQuenMK extends javax.swing.JFrame {
 
         pnlTong.add(pnlNhapMaXN, "card3");
 
-        btnHuy2.setText("Hủy");
+        btnHuy2.setText("Tiếp tục");
         btnHuy2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnHuy2ActionPerformed(evt);
             }
         });
 
-        jButton8.setText("Tiếp tục");
+        jButton8.setText("Hủy");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton8ActionPerformed(evt);
