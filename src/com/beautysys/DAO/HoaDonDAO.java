@@ -17,7 +17,7 @@ public class HoaDonDAO {
                 model.getMaNV(),
                 model.getMaKM(),
                 model.getNgayLap(),
-                model.getTongSoTien(),
+                0,
                 model.getTrangThai(),
                 model.getPhuongThucTT());
     }

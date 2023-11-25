@@ -17,7 +17,7 @@ public class NhapHangDAO {
                 model.getMaNV(),
                 model.getNhaCC(),
                 model.getNgayNhap(),
-                model.getTongTien());
+                0);
     }
 
     public void update(NhapHang model) {
