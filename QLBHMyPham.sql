@@ -252,11 +252,7 @@ VALUES
 -- Thêm vào bảng ChiTietHoaDon
 INSERT INTO ChiTietHoaDon (MaCTHD, MaHD, MaSP, SoLuong, DonGia)
 VALUES 
-    ('CTHD001', 'HD001', 'SP001', 4, 15000),
-    ('CTHD002', 'HD002', 'SP004', 1, 120000),
-    ('CTHD003', 'HD003', 'SP001', 3, 15000);
-
-/*    ('CTHD001', 'HD001', 'SP001', 4, 15000),
+	('CTHD001', 'HD001', 'SP001', 4, 15000),
     ('CTHD002', 'HD001', 'SP002', 1, 200000),
     ('CTHD003', 'HD001', 'SP003', 3, 50000),
     ('CTHD004', 'HD002', 'SP004', 1, 120000),
@@ -264,12 +260,8 @@ VALUES
     ('CTHD006', 'HD002', 'SP002', 1, 200000),
     ('CTHD007', 'HD003', 'SP003', 2, 50000),
     ('CTHD008', 'HD003', 'SP004', 5, 120000),
-    ('CTHD009', 'HD003', 'SP001', 3, 15000);*/
-		delete from ChiTietHoaDon
-	delete from HoaDon
+    ('CTHD009', 'HD003', 'SP001', 3, 15000);
 
-select * from HoaDon
-select * from SanPham
 -- Bảng Nhập hàng
 INSERT INTO NhapHang (MaNH, MaNV, NhaCC, NgayNhap, TongTien)
 VALUES
