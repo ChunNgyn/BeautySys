@@ -452,7 +452,7 @@
     <Component class="lgnvswing.lgnvTextField" name="txtMaSP">
       <Properties>
         <Property name="LGNV_maxCharLen" type="int" value="30"/>
-        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p Email...."/>
+        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p M&#xe3; SP...."/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtMaSPActionPerformed"/>
@@ -489,7 +489,7 @@
     <Component class="lgnvswing.lgnvTextField" name="txtMaDM">
       <Properties>
         <Property name="LGNV_maxCharLen" type="int" value="12"/>
-        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p s&#x1ed1; &#x111;i&#x1ec7;n tho&#x1ea1;i...."/>
+        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p M&#xe3; Danh M&#x1ee5;c...."/>
         <Property name="LGNV_textType" type="lgnvswing.lgnvTextField$textTypeEnum" editor="org.netbeans.modules.form.editors.EnumEditor">
           <Value id="NUMBER"/>
         </Property>
@@ -503,8 +503,8 @@
     </Component>
     <Component class="lgnvswing.lgnvTextField" name="txtTenSP">
       <Properties>
-        <Property name="LGNV_maxCharLen" type="int" value="12"/>
-        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p mm - dd - yyyy...."/>
+        <Property name="LGNV_maxCharLen" type="int" value="100"/>
+        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p T&#xea;n S&#x1ea3;n Ph&#x1ea9;m..."/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTenSPActionPerformed"/>
@@ -515,8 +515,8 @@
     </Component>
     <Component class="lgnvswing.lgnvTextField" name="txtMota">
       <Properties>
-        <Property name="LGNV_maxCharLen" type="int" value="12"/>
-        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p UserName...."/>
+        <Property name="LGNV_maxCharLen" type="int" value="120"/>
+        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p M&#xf4; T&#x1ea3;...."/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtMotaActionPerformed"/>
@@ -532,10 +532,10 @@
     </Component>
     <Component class="lgnvswing.lgnvTextField" name="txtSoluongTon">
       <Properties>
-        <Property name="LGNV_maxCharLen" type="int" value="12"/>
+        <Property name="LGNV_maxCharLen" type="int" value="13"/>
         <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p Password...."/>
         <Property name="LGNV_textType" type="lgnvswing.lgnvTextField$textTypeEnum" editor="org.netbeans.modules.form.editors.EnumEditor">
-          <Value id="PASSWORD"/>
+          <Value id="NUMBER"/>
         </Property>
       </Properties>
       <Events>
@@ -585,8 +585,8 @@
     </Container>
     <Component class="lgnvswing.lgnvTextField" name="txtThuongHieu">
       <Properties>
-        <Property name="LGNV_maxCharLen" type="int" value="12"/>
-        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p mm - dd - yyyy...."/>
+        <Property name="LGNV_maxCharLen" type="int" value="100"/>
+        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p H&#xe3;ng S&#x1ea3;n Ph&#x1ea9;m...."/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtThuongHieuActionPerformed"/>
@@ -598,7 +598,10 @@
     <Component class="lgnvswing.lgnvTextField" name="txtDonGia">
       <Properties>
         <Property name="LGNV_maxCharLen" type="int" value="12"/>
-        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p mm - dd - yyyy...."/>
+        <Property name="LGNV_placeholderText" type="java.lang.String" value="Nh&#x1ead;p Gi&#xe1; SP...."/>
+        <Property name="LGNV_textType" type="lgnvswing.lgnvTextField$textTypeEnum" editor="org.netbeans.modules.form.editors.EnumEditor">
+          <Value id="NUMBER"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtDonGiaActionPerformed"/>

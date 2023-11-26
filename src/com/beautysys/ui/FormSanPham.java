@@ -206,7 +206,10 @@ public class FormSanPham extends javax.swing.JFrame {
 
     void clear() {
         SanPham nv = new SanPham();
-
+        nv.setHinhSP("");
+        nv.setDonGia(0.0f);
+        nv.setTrangThai(true);
+        nv.setSLTonKho(0);
         this.setModel(nv);
         this.setStatus(true);
     }
@@ -229,7 +232,7 @@ public class FormSanPham extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) tblNhanVien.getModel();
         model.setRowCount(0);
         List<SanPham> list = null;
-        if (selectedItem != "Sắp Xếp") {
+        if (selectedItem != "Sắp xếp") {
             switch (selectedItem) {
                 case "Tên Tăng Dần":
                     list = dao.selectSortedByName();
@@ -509,7 +512,7 @@ public class FormSanPham extends javax.swing.JFrame {
         jLabel4.setText("MaSP");
 
         txtMaSP.setLGNV_maxCharLen(30);
-        txtMaSP.setLGNV_placeholderText("Nhập Email....");
+        txtMaSP.setLGNV_placeholderText("Nhập Mã SP....");
         txtMaSP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMaSPActionPerformed(evt);
@@ -527,7 +530,7 @@ public class FormSanPham extends javax.swing.JFrame {
         jLabel12.setText("Hãng");
 
         txtMaDM.setLGNV_maxCharLen(12);
-        txtMaDM.setLGNV_placeholderText("Nhập số điện thoại....");
+        txtMaDM.setLGNV_placeholderText("Nhập Mã Danh Mục....");
         txtMaDM.setLGNV_textType(lgnvswing.lgnvTextField.textTypeEnum.NUMBER);
         txtMaDM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -535,16 +538,16 @@ public class FormSanPham extends javax.swing.JFrame {
             }
         });
 
-        txtTenSP.setLGNV_maxCharLen(12);
-        txtTenSP.setLGNV_placeholderText("Nhập mm - dd - yyyy....");
+        txtTenSP.setLGNV_maxCharLen(100);
+        txtTenSP.setLGNV_placeholderText("Nhập Tên Sản Phẩm...");
         txtTenSP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTenSPActionPerformed(evt);
             }
         });
 
-        txtMota.setLGNV_maxCharLen(12);
-        txtMota.setLGNV_placeholderText("Nhập UserName....");
+        txtMota.setLGNV_maxCharLen(120);
+        txtMota.setLGNV_placeholderText("Nhập Mô Tả....");
         txtMota.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMotaActionPerformed(evt);
@@ -553,9 +556,9 @@ public class FormSanPham extends javax.swing.JFrame {
 
         jLabel13.setText("SL Tồn");
 
-        txtSoluongTon.setLGNV_maxCharLen(12);
+        txtSoluongTon.setLGNV_maxCharLen(13);
         txtSoluongTon.setLGNV_placeholderText("Nhập Password....");
-        txtSoluongTon.setLGNV_textType(lgnvswing.lgnvTextField.textTypeEnum.PASSWORD);
+        txtSoluongTon.setLGNV_textType(lgnvswing.lgnvTextField.textTypeEnum.NUMBER);
         txtSoluongTon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtSoluongTonActionPerformed(evt);
@@ -592,8 +595,8 @@ public class FormSanPham extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        txtThuongHieu.setLGNV_maxCharLen(12);
-        txtThuongHieu.setLGNV_placeholderText("Nhập mm - dd - yyyy....");
+        txtThuongHieu.setLGNV_maxCharLen(100);
+        txtThuongHieu.setLGNV_placeholderText("Nhập Hãng Sản Phẩm....");
         txtThuongHieu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtThuongHieuActionPerformed(evt);
@@ -601,7 +604,8 @@ public class FormSanPham extends javax.swing.JFrame {
         });
 
         txtDonGia.setLGNV_maxCharLen(12);
-        txtDonGia.setLGNV_placeholderText("Nhập mm - dd - yyyy....");
+        txtDonGia.setLGNV_placeholderText("Nhập Giá SP....");
+        txtDonGia.setLGNV_textType(lgnvswing.lgnvTextField.textTypeEnum.NUMBER);
         txtDonGia.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtDonGiaActionPerformed(evt);
