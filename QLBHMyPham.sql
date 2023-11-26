@@ -1,4 +1,4 @@
-﻿CREATE DATABASE QLBHMyPham;
+CREATE DATABASE QLBHMyPham;
 GO
 
 USE QLBHMyPham;
@@ -21,7 +21,7 @@ CREATE TABLE SanPham (
     MoTa NVARCHAR(255) NULL,
     HinhSP NVARCHAR(30) NOT NULL,
     SLTonKho INT NOT NULL,
-	TrangThai NVARCHAR(15) NOT NULL,
+	TrangThai BIT NOT NULL,
     FOREIGN KEY (MaDM) REFERENCES DanhMucSanPham(MaDM)
 );
 GO
@@ -33,7 +33,7 @@ CREATE TABLE NhanVien (
     Email NVARCHAR(255) NOT NULL,
     SDT NVARCHAR(11) NOT NULL,
     NgaySinh DATE NOT NULL,
-    ChucVu NVARCHAR(30) NOT NULL,
+    ChucVu BIT NOT NULL,
     TrangThai BIT NOT NULL,
     TenTK NVARCHAR(30) NOT NULL,
     MatKhau NVARCHAR(30) NOT NULL
@@ -210,30 +210,30 @@ INSERT INTO DanhMucSanPham (MaDM, TenDM) VALUES
 
 -- Bảng Sản phẩm
 INSERT INTO SanPham (MaSP, MaDM, TenSP, ThuongHieu, DonGia, MoTa, HinhSP, SLTonKho, TrangThai) VALUES
-	('SP001', 'DM001', N'Kem dưỡng ẩm', N'Nivea', 15000, N'Dưỡng ẩm cho da khô', 'kem_duong_am.jpg', 100, N'Còn hàng'),
-	('SP002', 'DM002', N'Son môi', N'Maybelline', 200000, N'Màu hồng cam đậm', 'son_moi.jpg', 50, N'Còn hàng'),
-	('SP003', 'DM003', N'Dầu gội', N'Pantene', 50000, N'Dành cho tóc khô và hư tổn', 'dau_goi.jpg', 120, N'Còn hàng'),
-	('SP004', 'DM004', N'Nước hoa nam', N'Dior', 120000, N'Hương thơm nam tính', 'nuoc_hoa_nam.jpg', 30, N'Còn hàng'),
-	('SP005', 'DM005', N'Bộ cọ trang điểm', N'Real Techniques', 180000, N'Bộ 10 cọ chất lượng cao', 'bo_co_trang_diem.jpg', 80, N'Còn hàng'),
-	('SP006', 'DM001', N'Sữa rửa mặt', N'Cetaphil', 35000, N'Dành cho da nhạy cảm', 'sua_rua_mat.jpg', 60, N'Còn hàng'),
-	('SP007', 'DM002', N'Phấn má hồng', N'L''Oreal', 25000, N'Màu hồng phấn nhẹ nhàng', 'phan_ma_hong.jpg', 40, N'Còn hàng'),
-	('SP008', 'DM003', N'Dầu xả', N'Herbal Essences', 55000, N'Dưỡng ẩm và làm mềm tóc', 'dau_xa.jpg', 90, N'Còn hàng'),
-	('SP009', 'DM004', N'Nước hoa nữ', N'Chanel', 180000, N'Hương thơm ngọt ngào', 'nuoc_hoa_nu.jpg', 25, N'Còn hàng'),
-	('SP010', 'DM005', N'Bút kẻ mắt', N'Maybelline', 120000, N'Đen sâu, không lem', 'but_ke_mat.jpg', 60, N'Còn hàng'),
-	('SP011', 'DM001', N'Mặt nạ dưỡng da', N'The Face Shop', 75000, N'Dưỡng ẩm và làm trắng da', 'mat_na.jpg', 75, N'Còn hàng'),
-	('SP012', 'DM002', N'Son nước', N'Revlon', 90000, N'Màu đỏ thắm tươi tắn', 'son_nuoc.jpg', 45, N'Còn hàng'),
-	('SP013', 'DM003', N'Kem duỗi tóc', N'TRESemmé', 65000, N'Giữ tóc mềm mại và suôn mượt', 'kem_duoi_toc.jpg', 70, N'Còn hàng'),
-	('SP014', 'DM004', N'Deodorant nữ', N'Dove', 30000, N'Kiểm soát mùi và giữ khô thoáng', 'deodorant_nu.jpg', 55, N'Còn hàng'),
-	('SP015', 'DM005', N'Bàn chải đánh răng', N'Oral-B', 5000, N'Bàn chải chăm sóc răng toàn diện', 'ban_chai_danh_rang.jpg', 100, N'Còn hàng');
+    ('SP001', 'DM001', N'Kem dưỡng ẩm', N'Nivea', 15000, N'Dưỡng ẩm cho da khô', 'kem_duong_am.jpg', 100, 0),
+    ('SP002', 'DM002', N'Son môi', N'Maybelline', 200000, N'Màu hồng cam đậm', 'son_moi.jpg', 50, 0),
+    ('SP003', 'DM003', N'Dầu gội', N'Pantene', 50000, N'Dành cho tóc khô và hư tổn', 'dau_goi.jpg', 120, 0),
+    ('SP004', 'DM004', N'Nước hoa nam', N'Dior', 120000, N'Hương thơm nam tính', 'nuoc_hoa_nam.jpg', 30, 0),
+    ('SP005', 'DM005', N'Bộ cọ trang điểm', N'Real Techniques', 180000, N'Bộ 10 cọ chất lượng cao', 'bo_co_trang_diem.jpg', 80, 0),
+    ('SP006', 'DM001', N'Sữa rửa mặt', N'Cetaphil', 35000, N'Dành cho da nhạy cảm', 'sua_rua_mat.jpg', 60, 0),
+    ('SP007', 'DM002', N'Phấn má hồng', N'L''Oreal', 25000, N'Màu hồng phấn nhẹ nhàng', 'phan_ma_hong.jpg', 40, 0),
+    ('SP008', 'DM003', N'Dầu xả', N'Herbal Essences', 55000, N'Dưỡng ẩm và làm mềm tóc', 'dau_xa.jpg', 90, 0),
+    ('SP009', 'DM004', N'Nước hoa nữ', N'Chanel', 180000, N'Hương thơm ngọt ngào', 'nuoc_hoa_nu.jpg', 25, 0),
+    ('SP010', 'DM005', N'Bút kẻ mắt', N'Maybelline', 120000, N'Đen sâu, không lem', 'but_ke_mat.jpg', 60, 0),
+    ('SP011', 'DM001', N'Mặt nạ dưỡng da', N'The Face Shop', 75000, N'Dưỡng ẩm và làm trắng da', 'mat_na.jpg', 75, 0),
+    ('SP012', 'DM002', N'Son nước', N'Revlon', 90000, N'Màu đỏ thắm tươi tắn', 'son_nuoc.jpg', 45, 0),
+    ('SP013', 'DM003', N'Kem duỗi tóc', N'TRESemmé', 65000, N'Giữ tóc mềm mại và suôn mượt', 'kem_duoi_toc.jpg', 70, 0),
+    ('SP014', 'DM004', N'Deodorant nữ', N'Dove', 30000, N'Kiểm soát mùi và giữ khô thoáng', 'deodorant_nu.jpg', 55, 0),
+    ('SP015', 'DM005', N'Bàn chải đánh răng', N'Oral-B', 5000, N'Bàn chải chăm sóc răng toàn diện', 'ban_chai_danh_rang.jpg', 100, 0);
 
 -- Bảng nhân viên
 INSERT INTO NhanVien (MaNV, TenNV, Email, SDT, NgaySinh, ChucVu, TrangThai, TenTK, MatKhau)
 VALUES 
-    ('NV001', N'Nguyễn Thị Hương', 'nguyenthihuong@gmail.com', '0123456789', '1990-01-01', N'Nhân viên', 1, 'huongnt', '123'),
-    ('NV002', N'Trần Văn Nam', 'tranvannam@gmail.com', '0123456789', '1992-05-15', N'Nhân viên', 1, 'namtv', '123'),
-    ('NV003', N'Phạm Minh Tuấn', 'phamminhtuan@gmail.com', '0123456789', '1988-09-30', N'Nhân viên', 1, 'tuanpm', '123'),
-    ('NV004', N'Lê Thị Ngọc', 'lengoc@gmail.com', '0123456789', '1995-12-20', N'Nhân viên', 1, 'ngoclt', '123'),
-    ('NV005', N'Hồ Anh Dũng', 'hoanhdung@gmail.com', '0123456789', '1993-03-10', N'Quản lý', 1, 'dungha', '123');
+    ('NV001', N'Nguyễn Thị Hương', 'nguyenthihuong@gmail.com', '0123456789', '1990-01-01', 0, 1, 'huongnt', '123'),
+    ('NV002', N'Trần Văn Nam', 'tranvannam@gmail.com', '0123456789', '1992-05-15', 0, 1, 'namtv', '123'),
+    ('NV003', N'Phạm Minh Tuấn', 'phamminhtuan@gmail.com', '0123456789', '1988-09-30', 0, 1, 'tuanpm', '123'),
+    ('NV004', N'Lê Thị Ngọc', 'lengoc@gmail.com', '0123456789', '1995-12-20', 0, 1, 'ngoclt', '123'),
+    ('NV005', N'Hồ Anh Dũng', 'hoanhdung@gmail.com', '0123456789', '1993-03-10', 1, 1, 'dungha', '123');
 
 -- Bảng khuyến mãi
 INSERT INTO KhuyenMai (MaKM, TenKM, MoTa, NgayBD, NgayKT, PhanTramGG)
@@ -252,15 +252,9 @@ VALUES
 -- Thêm vào bảng ChiTietHoaDon
 INSERT INTO ChiTietHoaDon (MaCTHD, MaHD, MaSP, SoLuong, DonGia)
 VALUES 
-	('CTHD001', 'HD001', 'SP001', 4, 15000),
-    ('CTHD002', 'HD001', 'SP002', 1, 200000),
-    ('CTHD003', 'HD001', 'SP003', 3, 50000),
-    ('CTHD004', 'HD002', 'SP004', 1, 120000),
-    ('CTHD005', 'HD002', 'SP001', 2, 15000),
-    ('CTHD006', 'HD002', 'SP002', 1, 200000),
-    ('CTHD007', 'HD003', 'SP003', 2, 50000),
-    ('CTHD008', 'HD003', 'SP004', 5, 120000),
-    ('CTHD009', 'HD003', 'SP001', 3, 15000);
+    ('CTHD001', 'HD001', 'SP001', 4, 15000),
+    ('CTHD002', 'HD002', 'SP004', 1, 120000),
+    ('CTHD003', 'HD003', 'SP001', 3, 15000);
 
 -- Bảng Nhập hàng
 INSERT INTO NhapHang (MaNH, MaNV, NhaCC, NgayNhap, TongTien)
