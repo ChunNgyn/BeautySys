@@ -4,11 +4,141 @@
  */
 package com.beautysys.ui;
 
+import com.beautysys.DAO.NhanVienDAO;
+import com.beautysys.Entity.NhanVien;
+import com.beautysys.helper.DialogHelper;
+import com.beautysys.helper.JdbcHelper;
+import com.beautysys.helper.ShareHelper;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+
 /**
  *
  * @author admin
  */
 public class FormDoiMK extends javax.swing.JFrame {
+
+    NhanVienDAO dao = new NhanVienDAO();
+    private String otp;
+    private String userEmail;
+
+    private enum FormState {
+        ENTER_EMAIL,
+        ENTER_OTP,
+        RESET_PASSWORD
+    }
+    private FormState currentState;
+
+    boolean validatePasswords() {
+        String MK = new String(txtMK.getPassword()).trim();
+        String XNMK = new String(txtXNMK.getPassword()).trim();
+
+        if (MK.isEmpty() || XNMK.isEmpty()) {
+            DialogHelper.alert(this, "Vui lòng nhập đầy đủ thông tin.");
+            return false;
+        }
+
+        if (!MK.equals(XNMK)) {
+            DialogHelper.alert(this, "Xác nhận mật khẩu mới không khớp.");
+            return false;
+        }
+
+        return true;
+    }
+
+    void changePassword() {
+        if (!validatePasswords()) {
+            return;
+        }
+
+        String tenTK = ShareHelper.USER.getTenTK();
+        String matKhauMoi = new String(txtMK.getPassword());
+
+        try {
+            dao.updatePassword(tenTK, matKhauMoi);
+            DialogHelper.alert(this, "Đổi mật khẩu thành công!");
+            this.dispose();
+        } catch (Exception e) {
+            DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+        }
+    }
+
+    private void sendOTPEmail(String email) {
+        otp = generateOTP();
+
+        String fromEmail = "trungthien221003@gmail.com";
+        String password = "sqok lnrf nasj wosh";
+
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(fromEmail, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+
+            message.setFrom(new InternetAddress(fromEmail));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+            message.setSubject("Your OTP Code");
+
+            message.setText("Your OTP code is: " + otp);
+
+            Transport.send(message);
+
+            System.out.println("Email sent successfully with OTP.");
+
+            currentState = FormState.ENTER_OTP;
+            updateUI();
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean verifyOTP(String userEnteredOTP) {
+        return userEnteredOTP.equals(otp);
+    }
+
+    private String generateOTP() {
+        String numbers = "1234567890";
+        StringBuilder sb = new StringBuilder(6);
+
+        for (int i = 0; i < 6; i++) {
+            int index = new Random().nextInt(numbers.length());
+            sb.append(numbers.charAt(index));
+        }
+
+        return sb.toString();
+    }
+
+    private void updateUI() {
+        pnlTong.removeAll();
+
+        switch (currentState) {
+            case ENTER_EMAIL:
+                pnlTong.add(pnlGuiMa);
+                break;
+            case ENTER_OTP:
+                pnlTong.add(pnlNhapMaXN);
+                break;
+            case RESET_PASSWORD:
+                pnlTong.add(pnlDoiMK);
+                break;
+        }
+
+        pnlTong.repaint();
+        pnlTong.revalidate();
+    }
 
     /**
      * Creates new form FormQuenMK
@@ -16,6 +146,7 @@ public class FormDoiMK extends javax.swing.JFrame {
     public FormDoiMK() {
         initComponents();
         setLocationRelativeTo(null);
+        currentState = FormState.ENTER_EMAIL;
     }
 
     /**
@@ -33,21 +164,21 @@ public class FormDoiMK extends javax.swing.JFrame {
         pnlTong = new javax.swing.JPanel();
         pnlGuiMa = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtEmail = new javax.swing.JTextField();
         btnGuiMa = new javax.swing.JButton();
         btnThoat = new javax.swing.JButton();
         pnlNhapMaXN = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtOTP = new javax.swing.JTextField();
         btnHuy = new javax.swing.JButton();
         btnNhapMaXN = new javax.swing.JButton();
         pnlDoiMK = new javax.swing.JPanel();
+        btnDoiMK = new javax.swing.JButton();
         btnHuy2 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtMK = new javax.swing.JPasswordField();
+        txtXNMK = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -83,7 +214,7 @@ public class FormDoiMK extends javax.swing.JFrame {
         pnlGuiMa.setLayout(pnlGuiMaLayout);
         pnlGuiMaLayout.setHorizontalGroup(
             pnlGuiMaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(txtEmail, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(pnlGuiMaLayout.createSequentialGroup()
                 .addGroup(pnlGuiMaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlGuiMaLayout.createSequentialGroup()
@@ -101,7 +232,7 @@ public class FormDoiMK extends javax.swing.JFrame {
             .addGroup(pnlGuiMaLayout.createSequentialGroup()
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(pnlGuiMaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGuiMa)
@@ -131,7 +262,7 @@ public class FormDoiMK extends javax.swing.JFrame {
         pnlNhapMaXN.setLayout(pnlNhapMaXNLayout);
         pnlNhapMaXNLayout.setHorizontalGroup(
             pnlNhapMaXNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(txtOTP, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(pnlNhapMaXNLayout.createSequentialGroup()
                 .addGroup(pnlNhapMaXNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlNhapMaXNLayout.createSequentialGroup()
@@ -149,7 +280,7 @@ public class FormDoiMK extends javax.swing.JFrame {
             .addGroup(pnlNhapMaXNLayout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtOTP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(pnlNhapMaXNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnHuy)
@@ -159,17 +290,17 @@ public class FormDoiMK extends javax.swing.JFrame {
 
         pnlTong.add(pnlNhapMaXN, "card3");
 
-        btnHuy2.setText("Tiếp tục");
-        btnHuy2.addActionListener(new java.awt.event.ActionListener() {
+        btnDoiMK.setText("Tiếp tục");
+        btnDoiMK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHuy2ActionPerformed(evt);
+                btnDoiMKActionPerformed(evt);
             }
         });
 
-        jButton8.setText("Hủy");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
+        btnHuy2.setText("Hủy");
+        btnHuy2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                btnHuy2ActionPerformed(evt);
             }
         });
 
@@ -182,21 +313,22 @@ public class FormDoiMK extends javax.swing.JFrame {
         pnlDoiMKLayout.setHorizontalGroup(
             pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDoiMKLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4))
-                .addGap(18, 18, 18)
-                .addGroup(pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                    .addComponent(jTextField4))
+                    .addGroup(pnlDoiMKLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtMK, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                            .addComponent(txtXNMK)))
+                    .addGroup(pnlDoiMKLayout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(btnHuy2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDoiMK)))
                 .addContainerGap())
-            .addGroup(pnlDoiMKLayout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(btnHuy2)
-                .addGap(18, 18, 18)
-                .addComponent(jButton8)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlDoiMKLayout.setVerticalGroup(
             pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -204,15 +336,15 @@ public class FormDoiMK extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtMK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtXNMK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlDoiMKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnHuy2)
-                    .addComponent(jButton8))
+                    .addComponent(btnDoiMK))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
 
@@ -257,39 +389,61 @@ public class FormDoiMK extends javax.swing.JFrame {
 
     private void btnGuiMaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuiMaActionPerformed
         // TODO add your handling code here:
-        pnlTong.removeAll();
-        pnlTong.add(pnlNhapMaXN);
-        pnlTong.repaint();
-        pnlTong.revalidate();
+        userEmail = txtEmail.getText().trim();
+
+        if (userEmail.isEmpty()) {
+            DialogHelper.alert(this, "Vui lòng nhập địa chỉ email.");
+            return;
+        }
+
+        // Kiểm tra xem email đã tồn tại trong cơ sở dữ liệu chưa
+        if (!dao.isEmailExist(userEmail)) {
+            DialogHelper.alert(this, "Email không tồn tại trong hệ thống.");
+            return;
+        }
+
+        sendOTPEmail(userEmail);
     }//GEN-LAST:event_btnGuiMaActionPerformed
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void btnHuy2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuy2ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton8ActionPerformed
+        if (currentState == FormState.RESET_PASSWORD) {
+            currentState = FormState.ENTER_EMAIL;
+            updateUI();
+            txtEmail.setText("");
+        }
+    }//GEN-LAST:event_btnHuy2ActionPerformed
 
     private void btnNhapMaXNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhapMaXNActionPerformed
         // TODO add your handling code here:
-        pnlTong.removeAll();
-        pnlTong.add(pnlDoiMK);
-        pnlTong.repaint();
-        pnlTong.revalidate();
+        String userEnteredOTP = txtOTP.getText();
+
+        // Kiểm tra xem mã OTP nhập vào có đúng không
+        if (verifyOTP(userEnteredOTP)) {
+            // Nếu mã OTP đúng, chuyển sang trạng thái đổi mật khẩu
+            currentState = FormState.RESET_PASSWORD;
+            updateUI();
+        } else {
+            // Nếu mã OTP sai, hiển thị thông báo lỗi và cho phép nhập lại
+            DialogHelper.alert(this, "Sai mã OTP, vui lòng thử lại");
+            txtOTP.setText(""); // Xóa trường nhập liệu để người dùng nhập lại
+        }
     }//GEN-LAST:event_btnNhapMaXNActionPerformed
 
     private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
         // TODO add your handling code here:
-        pnlTong.removeAll();
-        pnlTong.add(pnlGuiMa);
-        pnlTong.repaint();
-        pnlTong.revalidate();
+        if (currentState == FormState.ENTER_OTP) {
+            currentState = FormState.ENTER_EMAIL;
+            updateUI();
+            txtEmail.setText("");
+        }
     }//GEN-LAST:event_btnHuyActionPerformed
 
-    private void btnHuy2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuy2ActionPerformed
+    private void btnDoiMKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoiMKActionPerformed
         // TODO add your handling code here:
-        pnlTong.removeAll();
-        pnlTong.add(pnlGuiMa);
-        pnlTong.repaint();
-        pnlTong.revalidate();
-    }//GEN-LAST:event_btnHuy2ActionPerformed
+        changePassword();
+
+    }//GEN-LAST:event_btnDoiMKActionPerformed
 
     private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
         // TODO add your handling code here:
@@ -333,12 +487,12 @@ public class FormDoiMK extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDoiMK;
     private javax.swing.JButton btnGuiMa;
     private javax.swing.JButton btnHuy;
     private javax.swing.JButton btnHuy2;
     private javax.swing.JButton btnNhapMaXN;
     private javax.swing.JButton btnThoat;
-    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -346,13 +500,13 @@ public class FormDoiMK extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JPanel pnlDoiMK;
     private javax.swing.JPanel pnlGuiMa;
     private javax.swing.JPanel pnlNhapMaXN;
     private javax.swing.JPanel pnlTong;
+    private javax.swing.JTextField txtEmail;
+    private javax.swing.JPasswordField txtMK;
+    private javax.swing.JTextField txtOTP;
+    private javax.swing.JPasswordField txtXNMK;
     // End of variables declaration//GEN-END:variables
 }

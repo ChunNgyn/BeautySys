@@ -54,7 +54,7 @@ GO
 -- Bảng Đơn hàng
 CREATE TABLE HoaDon (
     MaHD NVARCHAR(30) primary key,
-    MaNV NVARCHAR(30),
+    MaNV NVARCHAR(30) NOT NULL,
 	MaKM NVARCHAR(30) NULL,
     NgayLap DATE NOT NULL,
 	TongSoTien FLOAT NOT NULL,
@@ -149,30 +149,56 @@ BEGIN
     JOIN inserted i ON SanPham.MaSP = i.MaSP;
 END;
 GO
-CREATE OR ALTER TRIGGER TongTienHoaDon
-ON HoaDon
-AFTER INSERT, UPDATE
+
+CREATE OR ALTER TRIGGER UpdateTongSoTien
+ON ChiTietHoaDon
+AFTER INSERT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Cập nhật tổng số tiền cho các hóa đơn mới được thêm hoặc được cập nhật
+    -- Cập nhật TongSoTien trong bảng HoaDon dựa trên ChiTietHoaDon
     UPDATE HoaDon
-    SET TongSoTien = CASE
-                        WHEN inserted.MaKM IS NULL THEN
-                            (SELECT SUM(SoLuong * DonGia) 
-                             FROM ChiTietHoaDon
-                             WHERE ChiTietHoaDon.MaHD = HoaDon.MaHD)
-                        ELSE
-                            (SELECT SUM(SoLuong * DonGia * (1 - KhuyenMai.PhanTramGG / 100))
-                             FROM ChiTietHoaDon
-                             LEFT JOIN KhuyenMai ON HoaDon.MaKM = KhuyenMai.MaKM
-                             WHERE ChiTietHoaDon.MaHD = HoaDon.MaHD
-                             GROUP BY KhuyenMai.PhanTramGG) -- Thêm GROUP BY vào đây
-                     END
+    SET TongSoTien = (
+        SELECT SUM(DonGia * SoLuong)
+        FROM ChiTietHoaDon
+        WHERE MaHD = HoaDon.MaHD
+    )
     FROM HoaDon
-    JOIN inserted ON HoaDon.MaHD = inserted.MaHD;
+    INNER JOIN inserted ON HoaDon.MaHD = inserted.MaHD;
+
+    -- Cập nhật giảm giá nếu có
+    UPDATE HoaDon
+    SET TongSoTien = 
+        CASE 
+            WHEN KhuyenMai.MaKM IS NOT NULL THEN TongSoTien - (TongSoTien * PhanTramGG)
+            ELSE TongSoTien
+        END
+    FROM HoaDon
+    INNER JOIN inserted ON HoaDon.MaHD = inserted.MaHD
+    LEFT JOIN KhuyenMai ON HoaDon.MaKM = KhuyenMai.MaKM;
+
 END;
+GO
+
+CREATE OR ALTER TRIGGER UpdateTongTienNhapHang
+ON ChiTietPhieuNhapHang
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Cập nhật tổng tiền cho tất cả các phiếu nhập hàng mới được chèn vào
+    UPDATE NhapHang
+    SET TongTien = (
+        SELECT SUM(DonGia * SoLuong)
+        FROM ChiTietPhieuNhapHang
+        WHERE MaNH = NhapHang.MaNH
+    )
+    FROM NhapHang
+    INNER JOIN inserted ON NhapHang.MaNH = inserted.MaNH;
+END;
+
 
 -- Bảng Danh mục sản phẩm
 INSERT INTO DanhMucSanPham (MaDM, TenDM) VALUES
@@ -217,38 +243,38 @@ VALUES
     ('KM003', N'Khuyến mãi đặc biệt', N'Giảm giá và tặng quà cho những sản phẩm đặc biệt', '2023-11-01', '2023-11-30', 0.15);
 
 -- Thêm vào bảng HoaDon
-INSERT INTO HoaDon (MaHD, MaNV, MaKM, NgayLap, TrangThai, PhuongThucTT)
+INSERT INTO HoaDon (MaHD, MaNV, MaKM, NgayLap, TongSoTien, TrangThai, PhuongThucTT)
 VALUES 
-    ('HD001', 'NV001', 'KM001', '2023-07-01',N'Đã thanh toán', N'Tiền mặt'),
-    ('HD002', 'NV002', 'KM002', '2023-08-15',N'Đã thanh toán', N'Momo'),
-    ('HD003', 'NV003', 'KM003', '2023-11-10',N'Đã thanh toán', N'Thẻ ngân hàng');
+    ('HD001', 'NV001', 'KM001', GETDATE(),0,N'Đã thanh toán', N'Tiền mặt'),
+    ('HD002', 'NV002', 'KM002', GETDATE(),0,N'Đã thanh toán', N'Momo'),
+    ('HD003', 'NV002', NULL, GETDATE(),0,N'Đã thanh toán', N'Thẻ ngân hàng');
 
 -- Thêm vào bảng ChiTietHoaDon
 INSERT INTO ChiTietHoaDon (MaCTHD, MaHD, MaSP, SoLuong, DonGia)
 VALUES 
-    ('CTHD001', 'HD001', 'SP001', 2, 500000),
-    ('CTHD002', 'HD001', 'SP002', 1, 600000),
-    ('CTHD003', 'HD001', 'SP003', 3, 400000),
-    ('CTHD004', 'HD002', 'SP004', 1, 800000),
-    ('CTHD005', 'HD002', 'SP005', 2, 700000),
-    ('CTHD006', 'HD002', 'SP006', 1, 500000),
-    ('CTHD007', 'HD003', 'SP002', 2, 600000),
-    ('CTHD008', 'HD003', 'SP004', 1, 800000),
-    ('CTHD009', 'HD003', 'SP006', 3, 500000);
+	('CTHD001', 'HD001', 'SP001', 4, 15000),
+    ('CTHD002', 'HD001', 'SP002', 1, 200000),
+    ('CTHD003', 'HD001', 'SP003', 3, 50000),
+    ('CTHD004', 'HD002', 'SP004', 1, 120000),
+    ('CTHD005', 'HD002', 'SP001', 2, 15000),
+    ('CTHD006', 'HD002', 'SP002', 1, 200000),
+    ('CTHD007', 'HD003', 'SP003', 2, 50000),
+    ('CTHD008', 'HD003', 'SP004', 5, 120000),
+    ('CTHD009', 'HD003', 'SP001', 3, 15000);
 
 -- Bảng Nhập hàng
 INSERT INTO NhapHang (MaNH, MaNV, NhaCC, NgayNhap, TongTien)
 VALUES
-    ('NH001', 'NV001', 'Nhà cung cấp X', '2023-06-15', 3000000),
-    ('NH002', 'NV002', 'Nhà cung cấp Y', '2023-08-20', 5000000),
-    ('NH003', 'NV003', 'Nhà cung cấp Z', '2023-11-12', 8000000);
+    ('NH001', 'NV001', N'Nhà cung cấp X', GETDATE(), 0),
+    ('NH002', 'NV002', N'Nhà cung cấp Y', GETDATE(), 0),
+    ('NH003', 'NV003', N'Nhà cung cấp Z', GETDATE(), 0);
 
 -- Bảng Chi tiết phiếu nhập hàng
 INSERT INTO ChiTietPhieuNhapHang (MaCTNH, MaNH, MaSP, SoLuong, DonGia)
 VALUES
-    ('CTNH001', 'NH001', 'SP001', 50, 120000),
-    ('CTNH002', 'NH002', 'SP002', 30, 180000),
-    ('CTNH003', 'NH003', 'SP003', 20, 400000);
+    ('CTNH001', 'NH001', 'SP001', 50, 15000),
+    ('CTNH002', 'NH002', 'SP002', 30, 200000),
+    ('CTNH003', 'NH003', 'SP003', 20, 50000);
 
 -- Bảng Phiếu trả hàng
 INSERT INTO PhieuTraHang (MaTH, MaNV, NgayTra, Lydo)
