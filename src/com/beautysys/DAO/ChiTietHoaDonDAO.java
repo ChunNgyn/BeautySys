@@ -9,7 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChiTietHoaDonDAO {
-
+     public String MaCTHDCuoi() {
+        String sql = "SELECT MAX(MaCTHD) AS MaCTHDCuoi FROM ChiTietHoaDon";
+        try {
+            ResultSet rs = JdbcHelper.executeQuery(sql);
+            if (rs.next()) {
+                return rs.getString("MaCTHDCuoi");
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return null;
+    }
     public void insert(ChiTietHoaDon model) {
         String sql = "INSERT INTO ChiTietHoaDon (MaCTHD, MaHD, MaSP, SoLuong, DonGia) VALUES (?, ?, ?, ?, ?)";
         JdbcHelper.executeUpdate(sql,

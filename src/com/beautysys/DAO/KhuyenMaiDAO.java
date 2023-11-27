@@ -1,6 +1,7 @@
 package com.beautysys.DAO;
 
 import com.beautysys.Entity.KhuyenMai;
+import com.beautysys.helper.DateHelper;
 import com.beautysys.helper.JdbcHelper;
 
 import java.sql.ResultSet;
@@ -46,6 +47,38 @@ public class KhuyenMaiDAO {
         String sql = "SELECT * FROM KhuyenMai WHERE MaKM=?";
         List<KhuyenMai> list = select(sql, maKM);
         return list.size() > 0 ? list.get(0) : null;
+    }
+
+    public KhuyenMai findByTenKM(String TenKM) {
+        String sql = "SELECT * FROM KhuyenMai WHERE TenKM=?";
+        List<KhuyenMai> list = select(sql, TenKM);
+        return list.size() > 0 ? list.get(0) : null;
+    }
+
+    public List<KhuyenMai> selectNotExpired() {
+        String sql = "SELECT * FROM KhuyenMai WHERE NgayKT >= ?";
+        return select(sql, DateHelper.now());
+    }
+
+    private List<KhuyenMai> selectNotExpired(String sql, Object... args) {
+        List<KhuyenMai> list = new ArrayList<>();
+        try {
+            ResultSet rs = null;
+            try {
+                rs = JdbcHelper.executeQuery(sql, args);
+                while (rs.next()) {
+                    KhuyenMai model = readFromResultSet(rs);
+                    list.add(model);
+                }
+            } finally {
+                if (rs != null) {
+                    rs.getStatement().getConnection().close();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return list;
     }
 
     private List<KhuyenMai> select(String sql, Object... args) {

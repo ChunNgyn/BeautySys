@@ -44,6 +44,19 @@ public class HoaDonDAO {
         return select(sql);
     }
 
+     public String MaHDCuoi() {
+        String sql = "SELECT MAX(MaHD) AS MaHDCuoi FROM HoaDon";
+        try {
+            ResultSet rs = JdbcHelper.executeQuery(sql);
+            if (rs.next()) {
+                return rs.getString("MaHDCuoi");
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return null;
+    }
+    
     public HoaDon findById(String maHD) {
         String sql = "SELECT * FROM HoaDon WHERE MaHD=?";
         List<HoaDon> list = select(sql, maHD);

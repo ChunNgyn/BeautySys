@@ -88,4 +88,40 @@ public class SanPhamDAO {
         model.setTrangThai(rs.getBoolean("TrangThai"));
         return model;
     }
+
+    public List<SanPham> selectProductInfo() {
+        String sql = "SELECT MaSP, MaDM, TenSP, ThuongHieu, DonGia FROM SanPham WHERE TrangThai = 0";
+        return selectProductInfo(sql);
+    }
+
+    private List<SanPham> selectProductInfo(String sql, Object... args) {
+        List<SanPham> list = new ArrayList<>();
+        try {
+            ResultSet rs = null;
+            try {
+                rs = JdbcHelper.executeQuery(sql, args);
+                while (rs.next()) {
+                    SanPham model = readProductInfoFromResultSet(rs);
+                    list.add(model);
+                }
+            } finally {
+                if (rs != null) {
+                    rs.getStatement().getConnection().close();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return list;
+    }
+
+    private SanPham readProductInfoFromResultSet(ResultSet rs) throws SQLException {
+        SanPham model = new SanPham();
+        model.setMaSP(rs.getString("MaSP"));
+        model.setMaDM(rs.getString("MaDM"));
+        model.setTenSP(rs.getString("TenSP"));
+        model.setThuongHieu(rs.getString("ThuongHieu"));
+        model.setDonGia(rs.getFloat("DonGia"));
+        return model;
+    }
 }
