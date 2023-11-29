@@ -1,25 +1,27 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package com.beautysys.ui;
 
 import com.beautysys.DAO.NhanVienDAO;
-import com.beautysys.Entity.NhanVien;
 import com.beautysys.helper.DialogHelper;
-import com.beautysys.helper.JdbcHelper;
 import com.beautysys.helper.ShareHelper;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import javax.mail.*;
-import javax.mail.internet.*;
+import java.util.Properties;
+import java.util.Random;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 /**
  *
  * @author admin
  */
-public class FormQuenMK extends javax.swing.JFrame {
+public class FormQuenMK extends javax.swing.JDialog {
 
     NhanVienDAO dao = new NhanVienDAO();
     private String otp;
@@ -141,9 +143,10 @@ public class FormQuenMK extends javax.swing.JFrame {
     }
 
     /**
-     * Creates new form FormQuenMK
+     * Creates new form FormQuenMK1
      */
-    public FormQuenMK() {
+    public FormQuenMK(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
         currentState = FormState.ENTER_EMAIL;
@@ -180,7 +183,7 @@ public class FormQuenMK extends javax.swing.JFrame {
         txtMK = new javax.swing.JPasswordField();
         txtXNMK = new javax.swing.JPasswordField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
@@ -225,7 +228,7 @@ public class FormQuenMK extends javax.swing.JFrame {
                         .addComponent(btnGuiMa)
                         .addGap(18, 18, 18)
                         .addComponent(btnThoat)))
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         pnlGuiMaLayout.setVerticalGroup(
             pnlGuiMaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -273,7 +276,7 @@ public class FormQuenMK extends javax.swing.JFrame {
                         .addComponent(btnHuy)
                         .addGap(18, 18, 18)
                         .addComponent(btnNhapMaXN)))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
         pnlNhapMaXNLayout.setVerticalGroup(
             pnlNhapMaXNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -405,14 +408,19 @@ public class FormQuenMK extends javax.swing.JFrame {
         sendOTPEmail(userEmail);
     }//GEN-LAST:event_btnGuiMaActionPerformed
 
-    private void btnHuy2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuy2ActionPerformed
+    private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
         // TODO add your handling code here:
-        if (currentState == FormState.RESET_PASSWORD) {
+        dispose();
+    }//GEN-LAST:event_btnThoatActionPerformed
+
+    private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
+        // TODO add your handling code here:
+        if (currentState == FormState.ENTER_OTP) {
             currentState = FormState.ENTER_EMAIL;
             updateUI();
             txtEmail.setText("");
         }
-    }//GEN-LAST:event_btnHuy2ActionPerformed
+    }//GEN-LAST:event_btnHuyActionPerformed
 
     private void btnNhapMaXNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhapMaXNActionPerformed
         // TODO add your handling code here:
@@ -430,25 +438,19 @@ public class FormQuenMK extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnNhapMaXNActionPerformed
 
-    private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
+    private void btnDoiMKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoiMKActionPerformed
         // TODO add your handling code here:
-        if (currentState == FormState.ENTER_OTP) {
+        changePassword();
+    }//GEN-LAST:event_btnDoiMKActionPerformed
+
+    private void btnHuy2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuy2ActionPerformed
+        // TODO add your handling code here:
+        if (currentState == FormState.RESET_PASSWORD) {
             currentState = FormState.ENTER_EMAIL;
             updateUI();
             txtEmail.setText("");
         }
-    }//GEN-LAST:event_btnHuyActionPerformed
-
-    private void btnDoiMKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoiMKActionPerformed
-        // TODO add your handling code here:
-        changePassword();
-
-    }//GEN-LAST:event_btnDoiMKActionPerformed
-
-    private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
-        // TODO add your handling code here:
-        dispose();
-    }//GEN-LAST:event_btnThoatActionPerformed
+    }//GEN-LAST:event_btnHuy2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -477,13 +479,18 @@ public class FormQuenMK extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FormQuenMK().setVisible(true);
+                FormQuenMK dialog = new FormQuenMK(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }

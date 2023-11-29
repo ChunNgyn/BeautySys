@@ -27,5 +27,10 @@ public class DanhMucSanPham {
     public void setTenDM(String TenDM) {
         this.TenDM = TenDM;
     }
+
+    @Override
+    public String toString() {
+        return MaDM + " - " + TenDM;
+    }
     
 }

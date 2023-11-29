@@ -44,7 +44,7 @@ public class HoaDonDAO {
         return select(sql);
     }
 
-     public String MaHDCuoi() {
+    public String MaHDCuoi() {
         String sql = "SELECT MAX(MaHD) AS MaHDCuoi FROM HoaDon";
         try {
             ResultSet rs = JdbcHelper.executeQuery(sql);
@@ -56,7 +56,7 @@ public class HoaDonDAO {
         }
         return null;
     }
-    
+
     public HoaDon findById(String maHD) {
         String sql = "SELECT * FROM HoaDon WHERE MaHD=?";
         List<HoaDon> list = select(sql, maHD);
@@ -94,5 +94,20 @@ public class HoaDonDAO {
         model.setTrangThai(rs.getString("TrangThai"));
         model.setPhuongThucTT(rs.getString("PhuongThucTT"));
         return model;
+    }
+
+    public List<HoaDon> findByKeyword(String MaHD) {
+        String sql = "SELECT * FROM HoaDon WHERE MaHD LIKE ? OR MaNV LIKE ? OR NgayLap LIKE ?";
+        return select(sql, "%" + MaHD + "%", "%" + MaHD + "%", "%" + MaHD + "%");
+    }
+
+    public List<HoaDon> TangDan(String Ma) {
+        String sql = "SELECT * FROM HoaDon ORDER BY " + Ma + " ASC";
+        return select(sql);
+    }
+
+    public List<HoaDon> GiamDan(String Ma) {
+        String sql = "SELECT * FROM HoaDon ORDER BY " + Ma + " DESC";
+        return select(sql);
     }
 }

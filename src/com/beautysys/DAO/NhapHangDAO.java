@@ -76,4 +76,9 @@ public class NhapHangDAO {
         model.setTongTien(rs.getFloat("TongTien"));
         return model;
     }
+
+    public List<NhapHang> findByKeyword(String maNH) {
+        String sql = "SELECT * FROM NhapHang WHERE MaNH LIKE ? OR MaNV LIKE ? OR NgayNhap LIKE ?";
+        return select(sql, "%" + maNH + "%", "%" + maNH + "%", "%" + maNH + "%");
+    }
 }

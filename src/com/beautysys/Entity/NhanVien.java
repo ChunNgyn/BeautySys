@@ -16,7 +16,7 @@ public class NhanVien {
     private String Email;
     private String SDT;
     private Date NgaySinh;
-    private String ChucVu;
+    private Boolean ChucVu;
     private Boolean TrangThai;
     private String TenTK;
     private String MatKhau;
@@ -61,11 +61,11 @@ public class NhanVien {
         this.NgaySinh = NgaySinh;
     }
 
-    public String getChucVu() {
+    public Boolean getChucVu() {
         return ChucVu;
     }
 
-    public void setChucVu(String ChucVu) {
+    public void setChucVu(Boolean ChucVu) {
         this.ChucVu = ChucVu;
     }
 

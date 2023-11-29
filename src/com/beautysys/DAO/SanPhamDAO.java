@@ -48,10 +48,59 @@ public class SanPhamDAO {
         return select(sql);
     }
 
+    public String MaSPCuoi() {
+        String sql = "SELECT MAX(MaSP) AS MaSPCuoi FROM SanPham";
+        try {
+            ResultSet rs = JdbcHelper.executeQuery(sql);
+            if (rs.next()) {
+                return rs.getString("MaSPCuoi");
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return null;
+    }
+
+    public List<SanPham> selectSortedByName() {
+        String sql = "SELECT * FROM SanPham WHERE TrangThai = 1 ORDER BY TenSP ASC";
+        return select(sql);
+    }
+
+    public List<SanPham> selectSortedByNameDesc() {
+        String sql = "SELECT * FROM SanPham WHERE TrangThai = 1 ORDER BY TenSP DESC";
+        return select(sql);
+    }
+
+    public List<SanPham> selectSortedByDonGiaAsc() {
+        String sql = "SELECT * FROM SanPham WHERE TrangThai = 1 ORDER BY DonGia ASC";
+        return select(sql);
+    }
+
+    public List<SanPham> selectSortedByDonGiaDesc() {
+        String sql = "SELECT * FROM SanPham WHERE TrangThai = 1 ORDER BY DonGia DESC";
+        return select(sql);
+    }
+
+    public List<SanPham> selectSortedByStatus0() {
+        String sql = "SELECT * FROM SanPham WHERE TrangThai = 0";
+        return select(sql);
+    }
+
+    public List<SanPham> selectSortedByStatus1() {
+        String sql = "SELECT * FROM SanPham WHERE TrangThai = 1";
+        return select(sql);
+    }
+
     public SanPham findById(String maSP) {
         String sql = "SELECT * FROM SanPham WHERE MaSP=?";
         List<SanPham> list = select(sql, maSP);
         return list.size() > 0 ? list.get(0) : null;
+    }
+
+    public List<SanPham> selectListKey(String key) {
+        String sql = "SELECT * FROM SanPham WHERE TenSP LIKE ? OR MaDM LIKE ? OR ThuongHieu LIKE ? WHERE TrangThai = 1";
+        String likeKeyword = "%" + key + "%";
+        return select(sql, likeKeyword, likeKeyword, likeKeyword);
     }
 
     private List<SanPham> select(String sql, Object... args) {
@@ -90,7 +139,7 @@ public class SanPhamDAO {
     }
 
     public List<SanPham> selectProductInfo() {
-        String sql = "SELECT MaSP, MaDM, TenSP, ThuongHieu, DonGia FROM SanPham WHERE TrangThai = 0";
+        String sql = "SELECT MaSP, MaDM, TenSP, ThuongHieu, DonGia FROM SanPham WHERE TrangThai = 1";
         return selectProductInfo(sql);
     }
 

@@ -9,7 +9,9 @@ import com.beautysys.Entity.NhanVien;
 import com.beautysys.helper.DateHelper;
 import com.beautysys.helper.DialogHelper;
 import java.util.List;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -17,9 +19,10 @@ import javax.swing.table.DefaultTableModel;
  * @author taikh
  */
 public class FormNhanVien extends javax.swing.JFrame {
-    int index = 0;
+
+    int index = -1;
     NhanVienDAO dao = new NhanVienDAO();
-    
+
     /**
      * Creates new form FormNhanVien
      */
@@ -27,9 +30,21 @@ public class FormNhanVien extends javax.swing.JFrame {
         initComponents();
         setExtendedState(FormNhanVien.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
-        tblNhanVien.setEnabled(false);
     }
     
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+    private String TaoMaHD() {
+        String MaNVCuoi = dao.MaNVCuoi();
+        if (MaNVCuoi == null) {
+            return "NV001";
+        }
+        int lastNumber = Integer.parseInt(MaNVCuoi.substring(2));
+        int newNumber = lastNumber + 1;
+        String MaHDMoi = String.format("NV%03d", newNumber);
+        return MaHDMoi;
+    }
     public boolean check() {
 
         if (txtEmail.getText().equals("") || txtNgaySinh.getText().equals("") || txtMaNV.getText().equals("") || txtPassword.getText().equals("") || txtSdt.getText().equals("") || txtTenNv.getText().equals("") || txtUsername.getText().equals("")) {
@@ -52,7 +67,9 @@ public class FormNhanVien extends javax.swing.JFrame {
             }
         }
         return true;
-    };
+    }
+
+    ;
     public boolean checkUpdate() {
 
         if (txtEmail.getText().equals("") || txtNgaySinh.getText().equals("") || txtMaNV.getText().equals("") || txtPassword.getText().equals("") || txtSdt.getText().equals("") || txtTenNv.getText().equals("") || txtUsername.getText().equals("")) {
@@ -68,31 +85,37 @@ public class FormNhanVien extends javax.swing.JFrame {
             return false;
         }
         return true;
-    };
+    }
+
+    ;
     
     void load() {
         DefaultTableModel model = (DefaultTableModel) tblNhanVien.getModel();
         model.setRowCount(0);
+        tblNhanVien.setDefaultEditor(Object.class, null);
         try {
             List<NhanVien> list = dao.select();
             for (NhanVien nv : list) {
                 Object[] row = {
-                nv.getMaNV(),
-                nv.getTenNV(),
-                nv.getEmail(),
-                nv.getSDT(),
-                DateHelper.toString(nv.getNgaySinh()),
-                nv.getChucVu()? "Nhân viên": "Quản lý",
-                nv.getTrangThai()? "Hoạt động" : "Nghỉ việc",
-                nv.getTenTK(),
-                nv.getMatKhau()
+                    nv.getMaNV(),
+                    nv.getTenNV(),
+                    nv.getEmail(),
+                    nv.getSDT(),
+                    DateHelper.toString(nv.getNgaySinh()),
+                    nv.getChucVu() ? "Nhân viên" : "Quản lý",
+                    nv.getTrangThai() ? "Hoạt động" : "Nghỉ việc",
+                    nv.getTenTK(),
+                    nv.getMatKhau()
                 };
                 model.addRow(row);
+                model.fireTableDataChanged();
+                ListSelectionModel selectionModel;
+                selectionModel = tblNhanVien.getSelectionModel();
+                selectionModel.setSelectionInterval(index, index);
             }
+        } catch (Exception e) {
+            DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
         }
-         catch (Exception e) {
-            DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");      
-     }
     }
 
     void edit() {
@@ -107,9 +130,10 @@ public class FormNhanVien extends javax.swing.JFrame {
             DialogHelper.alert(this, "lỗi truy vấn dữ liệu!");
         }
     }
+
     void insert() {
         NhanVien model = getModel();
-       // String confirm = new String(txtxacnhanmk.getPassword());
+        // String confirm = new String(txtxacnhanmk.getPassword());
         if (check()) {
             try {
                 dao.insert(model);
@@ -123,18 +147,18 @@ public class FormNhanVien extends javax.swing.JFrame {
             DialogHelper.alert(this, "xác Nhập mật khẩu không đúng!");
         }
     }
-    
+
     void update() {
         NhanVien model = getModel();
-        if(checkUpdate()){
-             try {
+        if (checkUpdate()) {
+            try {
                 dao.update(model);
                 this.load();
                 DialogHelper.alert(this, "Cập nhật thành công!");
             } catch (Exception e) {
                 DialogHelper.alert(this, "Cập nhật thất bại!");
             }
-        }        
+        }
     }
 
     void delete() {
@@ -150,7 +174,7 @@ public class FormNhanVien extends javax.swing.JFrame {
             }
         }
     }
-    
+
     void setModel(NhanVien model) {
         txtMaNV.setText(model.getMaNV());
         txtTenNv.setText(model.getTenNV());
@@ -158,7 +182,7 @@ public class FormNhanVien extends javax.swing.JFrame {
         txtSdt.setText(model.getSDT());
         txtNgaySinh.setText(DateHelper.toString(model.getNgaySinh()));
         if (model.getChucVu() == true) {
-        jcbChucvu.setSelectedIndex(1);
+            jcbChucvu.setSelectedIndex(1);
         } else {
             jcbChucvu.setSelectedIndex(0);
         }
@@ -176,7 +200,7 @@ public class FormNhanVien extends javax.swing.JFrame {
         model.setEmail(txtEmail.getText());
         model.setSDT(txtSdt.getText());
         model.setNgaySinh(DateHelper.toDate(txtNgaySinh.getText()));
-         String selectedChucVu = (String) jcbChucvu.getSelectedItem();
+        String selectedChucVu = (String) jcbChucvu.getSelectedItem();
         if ("Quản lý".equals(selectedChucVu)) {
             model.setChucVu(false);
         } else {
@@ -187,41 +211,45 @@ public class FormNhanVien extends javax.swing.JFrame {
         model.setMatKhau(new String(txtPassword.getPassword()));
         return model;
     }
-    
+
     void clear() {
         NhanVien nv = new NhanVien();
+        nv.setMaNV(TaoMaHD());
         nv.setChucVu(true);
         nv.setTrangThai(true);
-        nv.setNgaySinh(DateHelper.subtractYears(DateHelper.now(), 20));
+        nv.setNgaySinh(DateHelper.now());
         this.setModel(nv);
         this.setStatus(true);
+        jRadioButton1.setSelected(true);
+        index = -1;
+        this.load();
     }
-    
-    void FindByid(){
-        String keyword = txtKeySearch.getText(); 
+
+    void FindByid() {
+        String keyword = txtKeySearch.getText();
         DefaultTableModel model = (DefaultTableModel) tblNhanVien.getModel();
         model.setRowCount(0);
         try {
             List<NhanVien> list = dao.selectListKey(keyword);
             for (NhanVien nv : list) {
                 Object[] row = {
-                nv.getMaNV(),
-                nv.getTenNV(),
-                nv.getEmail(),
-                nv.getSDT(),
-                DateHelper.toString(nv.getNgaySinh()),
-                nv.getChucVu()? "Nhân viên": "Quản lý",
-                nv.getTrangThai()? "Hoạt động" : "Nghỉ việc",
-                nv.getTenTK(),
-                nv.getMatKhau()
+                    nv.getMaNV(),
+                    nv.getTenNV(),
+                    nv.getEmail(),
+                    nv.getSDT(),
+                    DateHelper.toString(nv.getNgaySinh()),
+                    nv.getChucVu() ? "Nhân viên" : "Quản lý",
+                    nv.getTrangThai() ? "Hoạt động" : "Nghỉ việc",
+                    nv.getTenTK(),
+                    nv.getMatKhau()
                 };
                 model.addRow(row);
             }
+        } catch (Exception e) {
+            DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
         }
-         catch (Exception e) {
-            DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");      
-     }
     }
+
     void setStatus(boolean insertable) {
         txtMaNV.setEditable(insertable);
         btnThemNhanVien.setEnabled(insertable);
@@ -234,7 +262,7 @@ public class FormNhanVien extends javax.swing.JFrame {
         btnNext.setEnabled(!insertable && last);
         btnLast.setEnabled(!insertable && last);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -280,7 +308,7 @@ public class FormNhanVien extends javax.swing.JFrame {
         jRadioButton1 = new javax.swing.JRadioButton();
         jcbChucvu = new javax.swing.JComboBox<>();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
@@ -288,7 +316,7 @@ public class FormNhanVien extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(102, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 2, 24)); // NOI18N
         jLabel1.setText("THÔNG TIN NHÂN VIÊN");
@@ -480,7 +508,8 @@ public class FormNhanVien extends javax.swing.JFrame {
         jLabel4.setText("Email");
 
         txtMaNV.setLGNV_maxCharLen(12);
-        txtMaNV.setLGNV_placeholderText("Nhập mã nhân viên...");
+        txtMaNV.setLGNV_placeholderText("");
+        txtMaNV.setEnabled(false);
         txtMaNV.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMaNVActionPerformed(evt);
@@ -680,7 +709,7 @@ public class FormNhanVien extends javax.swing.JFrame {
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
         String checkmanv = txtUsername.getText();
-        if(checkmanv != null){
+        if (checkmanv != null) {
             this.delete();
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
@@ -688,31 +717,37 @@ public class FormNhanVien extends javax.swing.JFrame {
     private void btnFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFirstActionPerformed
         // TODO add your handling code here:
         this.index = 0;
+        this.load();
         this.edit();
     }//GEN-LAST:event_btnFirstActionPerformed
 
     private void btnPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreActionPerformed
         // TODO add your handling code here:
         this.index--;
+        this.load();
         this.edit();
     }//GEN-LAST:event_btnPreActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
         // TODO add your handling code here:
-         this.index++;
+        this.index++;
+        this.load();
         this.edit();
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void btnLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLastActionPerformed
         // TODO add your handling code here:
         this.index = (tblNhanVien.getRowCount() - 1);
-            this.edit();     
+        this.load();
+        this.edit();
     }//GEN-LAST:event_btnLastActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-         this.load();
-         this.setStatus(true);
+        index = 0;
+        this.load();
+        this.edit();
+        this.setStatus(false);
     }//GEN-LAST:event_formWindowOpened
 
     private void txtMaNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaNVActionPerformed
@@ -745,11 +780,9 @@ public class FormNhanVien extends javax.swing.JFrame {
 
     private void tblNhanVienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblNhanVienMouseClicked
         // TODO add your handling code here:
-        if (evt.getClickCount() == 2) {
-            this.index = tblNhanVien.rowAtPoint(evt.getPoint());
-            if (this.index >= 0) {
-                this.edit();
-            }
+        this.index = tblNhanVien.getSelectedRow();
+        if (this.index >= 0) {
+            this.edit();
         }
     }//GEN-LAST:event_tblNhanVienMouseClicked
 

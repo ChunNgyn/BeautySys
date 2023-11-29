@@ -2,6 +2,7 @@ package com.beautysys.helper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateHelper {
@@ -54,7 +55,12 @@ public class DateHelper {
     public static Date now() {
         return new Date();
     }
-
+    public static Date subtractYears(Date date, int years) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.YEAR, -years);
+        return calendar.getTime();
+    }
     /**
      * Bổ sung số ngày vào thời gian
      *

@@ -1,6 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package com.beautysys.ui;
 
@@ -10,20 +10,21 @@ import com.beautysys.helper.DialogHelper;
 import com.beautysys.helper.ShareHelper;
 import java.awt.Color;
 import java.awt.Cursor;
-import javax.swing.JFrame;
 
 /**
  *
  * @author admin
  */
-public class FormDangNhap extends javax.swing.JFrame {
+public class FormDangNhap extends javax.swing.JDialog {
 
+    public java.awt.Frame parent;
     NhanVienDAO dao = new NhanVienDAO();
 
     /**
-     * Creates new form LoginForm
+     * Creates new form FormDangNhap1
      */
-    public FormDangNhap() {
+    public FormDangNhap(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
     }
@@ -80,7 +81,6 @@ public class FormDangNhap extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         lblDN = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -92,9 +92,7 @@ public class FormDangNhap extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         txtMK = new javax.swing.JPasswordField();
 
-        jButton1.setText("jButton1");
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
 
         jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
@@ -156,7 +154,7 @@ public class FormDangNhap extends javax.swing.JFrame {
                         .addComponent(btnDN)
                         .addGap(18, 18, 18)
                         .addComponent(btnThoat)
-                        .addGap(94, 100, Short.MAX_VALUE))
+                        .addGap(94, 116, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(38, 38, 38)
@@ -207,17 +205,20 @@ public class FormDangNhap extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnDNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDNActionPerformed
+        // TODO add your handling code here:
+        Login();
+    }//GEN-LAST:event_btnDNActionPerformed
+
     private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
         // TODO add your handling code here:
         Exit();
     }//GEN-LAST:event_btnThoatActionPerformed
 
-    private void lblQuenMKMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuenMKMouseExited
+    private void lblQuenMKMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuenMKMouseClicked
         // TODO add your handling code here:
-        lblQuenMK.setText("Quên mật khẩu ?");
-        lblQuenMK.setForeground(Color.black);
-        lblQuenMK.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_lblQuenMKMouseExited
+        new FormQuenMK(parent, true).setVisible(true);
+    }//GEN-LAST:event_lblQuenMKMouseClicked
 
     private void lblQuenMKMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuenMKMouseEntered
         // TODO add your handling code here:
@@ -226,15 +227,12 @@ public class FormDangNhap extends javax.swing.JFrame {
         lblQuenMK.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }//GEN-LAST:event_lblQuenMKMouseEntered
 
-    private void lblQuenMKMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuenMKMouseClicked
+    private void lblQuenMKMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuenMKMouseExited
         // TODO add your handling code here:
-        new FormQuenMK().setVisible(true);
-    }//GEN-LAST:event_lblQuenMKMouseClicked
-
-    private void btnDNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDNActionPerformed
-        // TODO add your handling code here:
-        Login();
-    }//GEN-LAST:event_btnDNActionPerformed
+        lblQuenMK.setText("Quên mật khẩu ?");
+        lblQuenMK.setForeground(Color.black);
+        lblQuenMK.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_lblQuenMKMouseExited
 
     /**
      * @param args the command line arguments
@@ -264,10 +262,17 @@ public class FormDangNhap extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FormDangNhap().setVisible(true);
+                FormDangNhap dialog = new FormDangNhap(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
@@ -275,7 +280,6 @@ public class FormDangNhap extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDN;
     private javax.swing.JButton btnThoat;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;

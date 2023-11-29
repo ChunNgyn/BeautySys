@@ -73,4 +73,9 @@ public class TraHangDAO {
         model.setLydo(rs.getString("Lydo"));
         return model;
     }
+
+    public List<TraHang> findByKeyword(String maTH) {
+        String sql = "SELECT * FROM PhieuTraHang WHERE MaTH LIKE ? OR MaNV LIKE ? OR NgayTra LIKE ?";
+        return select(sql, "%" + maTH + "%", "%" + maTH + "%", "%" + maTH + "%");
+    }
 }

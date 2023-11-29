@@ -5,6 +5,8 @@
 package com.beautysys.helper;
 
 import com.beautysys.Entity.NhanVien;
+import java.io.File;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -30,5 +32,9 @@ public class ShareHelper {
      */
     public static boolean authenticated() {
         return ShareHelper.USER != null;
+    }
+    public static ImageIcon readLogo(String fileName) {
+        File path = new File("src//com//beautysys//icon//imageSP", fileName);
+        return new ImageIcon(path.getAbsolutePath());
     }
 }
